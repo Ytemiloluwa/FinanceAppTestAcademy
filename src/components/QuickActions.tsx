@@ -67,6 +67,7 @@ actionItem : {
 iconContainer: {
 
     marginBottom: 11
+
 }
 
 });

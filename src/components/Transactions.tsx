@@ -4,11 +4,10 @@ import { AppTextStyle, Typography } from './Typography';
 import { COLORS } from '../theme/color';
 import { formatNumber } from '../util/formatter';
 import { Icons } from '../theme/icons';
-import { mockTransactions } from '../data'; 
+import { mockTransactions } from '../data';
 
 export const RecentTransactions = () => {
-
-  const displayedTransactions = mockTransactions.slice(0, 3);
+  const displayedTransactions = mockTransactions;
 
   return (
     <View style={styles.container}>
@@ -16,53 +15,76 @@ export const RecentTransactions = () => {
         <Typography textstyle={AppTextStyle.heading7} color={COLORS.Slate800}>
           {'Recent Transactions'}
         </Typography>
-        
+
         <TouchableOpacity activeOpacity={1} style={styles.seeAllButton}>
-          <Typography textstyle={AppTextStyle.bodySmallBold} color={COLORS.Indigo500}>
+          <Typography
+            textstyle={AppTextStyle.bodySmallBold}
+            color={COLORS.Indigo500}
+          >
             {'See All'}
           </Typography>
-          <Icons.right/>
+          <Icons.right />
         </TouchableOpacity>
       </View>
 
       <View style={styles.transactionCard}>
-        {displayedTransactions.map((item) => {
-          const isCredit = item.amount > 0;
-          
+        {displayedTransactions.map(item => {
+          const isCredit = item.type === 'credit';
+
+          const statusConfig = {
+            success: { bg: '#F0FDF4', text: COLORS.Green600 },
+            pending: { bg: '#FFFBEB', text: '#D97706' },
+            failed: { bg: '#FEF2F2', text: COLORS.Red600 },
+          };
+
+          const currentStatus =
+            statusConfig[item.status] || statusConfig.success;
+
           return (
             <View key={item.id} style={styles.transactionRow}>
-              <View style={[
-                styles.iconContainer, 
-                { backgroundColor: isCredit ? COLORS.Green50 : COLORS.Red50}
-              ]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: isCredit ? COLORS.Green50 : COLORS.Red50 },
+                ]}
+              >
                 {isCredit ? <Icons.credit /> : <Icons.debit />}
               </View>
 
               <View style={styles.middleSection}>
-                <Typography textstyle={AppTextStyle.bodySmallBold} color={COLORS.Slate800}>
+                <Typography
+                  textstyle={AppTextStyle.bodySmallBold}
+                  color={COLORS.Slate800}
+                >
                   {item.description}
                 </Typography>
-                
-                <Typography textstyle={AppTextStyle.bodyTiny} color={COLORS.Gray400} style={{ marginTop: 4 }}>
+
+                <Typography
+                  textstyle={AppTextStyle.bodyTiny}
+                  color={COLORS.Gray400}
+                  style={{ marginTop: 4 }}
+                >
                   {item.date}
                 </Typography>
               </View>
-              
+
               <View style={styles.rightSection}>
-                <Typography 
-                  textstyle={AppTextStyle.bodySmallBold} 
+                <Typography
+                  textstyle={AppTextStyle.bodySmallBold}
                   color={isCredit ? COLORS.Green600 : COLORS.Slate800}
                 >
-                  {`${isCredit ? '+' : '-'}₦${formatNumber(Math.abs(item.amount))}`}
+                  {`${isCredit ? '+' : '-'}₦${formatNumber(item.amount)}`}
                 </Typography>
-                
-                <View style={[
-                  styles.statusBadge, 
-                  { backgroundColor: item.status === 'success' ? COLORS.Green50 : COLORS.Red50}
-                ]}>
-                  <Typography 
-                    textstyle={AppTextStyle.bodyTiny} 
-                    color={item.status === 'success' ? COLORS.Green600 : COLORS.Red600}
+
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: currentStatus.bg },
+                  ]}
+                >
+                  <Typography
+                    textstyle={AppTextStyle.bodyTiny}
+                    color={currentStatus.text}
                   >
                     {item.status}
                   </Typography>
@@ -78,14 +100,14 @@ export const RecentTransactions = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 24, 
+    marginTop: 24,
     paddingHorizontal: 20,
   },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16, 
+    marginBottom: 16,
   },
   seeAllButton: {
     flexDirection: 'row',
@@ -103,11 +125,11 @@ const styles = StyleSheet.create({
   transactionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 56,        
-    paddingVertical: 6, 
+    height: 56,
+    paddingVertical: 6,
   },
   iconContainer: {
-    width: 40,        
+    width: 40,
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
@@ -115,18 +137,18 @@ const styles = StyleSheet.create({
   },
   middleSection: {
     flex: 1,
-    marginLeft: 12, 
+    marginLeft: 12,
   },
   rightSection: {
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
   statusBadge: {
-    marginTop: 4,   
+    marginTop: 4,
     paddingHorizontal: 12,
     paddingVertical: 2,
     borderRadius: 100,
-    minWidth: 40,    
+    minWidth: 40,
     alignItems: 'center',
   },
 });
